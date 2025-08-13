@@ -10,8 +10,6 @@ namespace backend.Services
         Task<TaskItem> CreateTaskAsync(TaskItem task);
         Task<TaskItem?> UpdateTaskAsync(int id, TaskItem updatedTask);
         Task<bool> DeleteTaskAsync(int id);
-        Task<IEnumerable<TaskItem>> GetTasksByPriorityAsync(TaskPriority priority);
-        Task<IEnumerable<TaskItem>> GetOverdueTasksAsync();
     }
     
     public class TaskService : ITaskService
@@ -74,16 +72,6 @@ namespace backend.Services
         public async Task<bool> DeleteTaskAsync(int id)
         {
             return await _taskRepository.DeleteAsync(id);
-        }
-        
-        public async Task<IEnumerable<TaskItem>> GetTasksByPriorityAsync(TaskPriority priority)
-        {
-            return await _taskRepository.GetByPriorityAsync(priority);
-        }
-        
-        public async Task<IEnumerable<TaskItem>> GetOverdueTasksAsync()
-        {
-            return await _taskRepository.GetOverdueTasksAsync();
         }
     }
 }

@@ -1,8 +1,8 @@
 @backend_HostAddress = http://localhost:5192
 
-# Task Management API Tests with EF Core
+# Task Management API Tests - Essential CRUD Operations
 
-### Get all tasks (should show seed data initially)
+### Get all tasks
 GET {{backend_HostAddress}}/tasks
 
 ###
@@ -16,8 +16,7 @@ Content-Type: application/json
   "description": "Write comprehensive documentation for the task management system",
   "priority": 0,
   "dueDate": "2025-08-20T10:00:00Z",
-  "status": 0,
-  "createdBy": "John Doe"
+  "status": 0
 }
 
 ###
@@ -31,14 +30,8 @@ Content-Type: application/json
   "description": "Urgent security patch required for production system",
   "priority": 2,
   "dueDate": "2025-08-14T09:00:00Z",
-  "status": 0,
-  "createdBy": "Security Team"
+  "status": 0
 }
-
-###
-
-### Get all tasks (should show created tasks from database)
-GET {{backend_HostAddress}}/tasks
 
 ###
 
@@ -47,90 +40,48 @@ GET {{backend_HostAddress}}/tasks/1
 
 ###
 
-### Get high priority tasks only
-GET {{backend_HostAddress}}/tasks/priority/2
-
-###
-
-### Get overdue tasks
-GET {{backend_HostAddress}}/tasks/overdue
-
-###
-
 ### Update a task (change to high priority to trigger event)
 PUT {{backend_HostAddress}}/tasks/1
 Content-Type: application/json
 
 {
+  "title": "Updated task title",
   "priority": 2,
-  "status": 1,
-  "updatedBy": "Project Manager"
+  "status": 1
 }
 
 ###
 
-### Update high priority task status
+### Update task status to completed
 PUT {{backend_HostAddress}}/tasks/2
 Content-Type: application/json
 
 {
-  "status": 2,
-  "updatedBy": "Developer"
+  "status": 2
 }
 
 ###
 
-### Soft delete a task (default delete behavior)
+### Delete a task
 DELETE {{backend_HostAddress}}/tasks/1
 
 ###
 
-### Try to get soft deleted task (should return 404)
+### Verify task was deleted (should return 404)
 GET {{backend_HostAddress}}/tasks/1
 
 ###
 
-### Permanently delete a task
-DELETE {{backend_HostAddress}}/tasks/2/permanent
-
-###
-
-### Create another high priority task to test persistence
+### Create another task for testing
 POST {{backend_HostAddress}}/tasks
 Content-Type: application/json
 
 {
-  "title": "Database backup emergency",
-  "description": "Critical database backup needed before maintenance window",
-  "priority": 2,
-  "dueDate": "2025-08-13T23:59:59Z",
-  "status": 1,
-  "createdBy": "DevOps Team"
-}
-
-###
-
-### Create an overdue task for testing
-POST {{backend_HostAddress}}/tasks
-Content-Type: application/json
-
-{
-  "title": "Overdue Test Task",
-  "description": "This task should appear in overdue list",
+  "title": "Database backup task",
+  "description": "Regular database backup maintenance",
   "priority": 1,
-  "dueDate": "2025-08-12T10:00:00Z",
-  "status": 0,
-  "createdBy": "Test User"
+  "dueDate": "2025-08-15T23:59:59Z",
+  "status": 0
 }
-
-###
-
-### Get overdue tasks again (should show the overdue task)
-GET {{backend_HostAddress}}/tasks/overdue
-
-###
-
-### Get medium priority tasks
-GET {{backend_HostAddress}}/tasks/priority/1
 
 ###

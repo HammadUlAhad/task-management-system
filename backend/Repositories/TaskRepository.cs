@@ -12,9 +12,6 @@ namespace backend.Repositories
         Task<TaskItem> CreateAsync(TaskItem task);
         Task<TaskItem?> UpdateAsync(TaskItem task);
         Task<bool> DeleteAsync(int id);
-        Task<IEnumerable<TaskItem>> GetByPriorityAsync(TaskPriority priority);
-        Task<IEnumerable<TaskItem>> GetOverdueTasksAsync();
-        Task<int> GetTaskCountAsync();
     }
 
     public class TaskRepository : ITaskRepository
@@ -81,28 +78,6 @@ namespace backend.Repositories
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task<IEnumerable<TaskItem>> GetByPriorityAsync(TaskPriority priority)
-        {
-            return await _context.Tasks
-                .Where(t => t.Priority == priority)
-                .OrderByDescending(t => t.CreatedAt)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<TaskItem>> GetOverdueTasksAsync()
-        {
-            var now = DateTime.UtcNow;
-            return await _context.Tasks
-                .Where(t => t.DueDate < now && t.Status != TaskStatus.Completed)
-                .OrderBy(t => t.DueDate)
-                .ToListAsync();
-        }
-
-        public async Task<int> GetTaskCountAsync()
-        {
-            return await _context.Tasks.CountAsync();
         }
     }
 }
