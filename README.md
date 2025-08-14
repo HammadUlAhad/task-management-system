@@ -2,6 +2,8 @@
 
 A full-stack task management application built with modern web technologies, featuring advanced functionality like lazy loading, real-time filtering, and comprehensive logging.
 
+> **Quick Start**: Database is automatically created when you run `dotnet ef database update` - no manual setup required!
+
 ## What This Project Does
 
 This task management system allows users to:
@@ -123,10 +125,18 @@ task-management-system/
    dotnet restore
    ```
 
-3. **Update database** (creates LocalDB database):
+3. **Set up the database**:
+   
+   **First time setup** - Create and initialize the database:
    ```bash
    dotnet ef database update
    ```
+   
+   > **Note**: This command will:
+   > - Create a new SQL Server LocalDB database named `TaskManagementDB`
+   > - Apply all migrations to create the required tables (`Tasks` table)
+   > - The database file will be created in your user directory
+   > - No manual database setup required!
 
 4. **Run the backend**:
    ```bash
@@ -169,6 +179,39 @@ cd backend && dotnet run
 ```bash
 cd frontend && npm run dev
 ```
+
+## Troubleshooting
+
+### Database Issues
+
+**If `dotnet ef database update` fails:**
+
+1. **Install EF Core tools globally** (if not already installed):
+   ```bash
+   dotnet tool install --global dotnet-ef
+   ```
+
+2. **Check if SQL Server LocalDB is installed:**
+   ```bash
+   sqllocaldb info
+   ```
+   If not installed, download from [Microsoft SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+
+3. **Reset database** (if corrupted):
+   ```bash
+   dotnet ef database drop
+   dotnet ef database update
+   ```
+
+**If connection fails:**
+- Ensure LocalDB is running: `sqllocaldb start MSSQLLocalDB`
+- Check connection string in `appsettings.json`
+
+### Common Issues
+
+- **Port conflicts**: Backend uses port 5192, frontend uses port 3000
+- **CORS errors**: Make sure backend is running before starting frontend
+- **Build errors**: Run `dotnet clean` and `dotnet build` in backend directory
 
 ## API Documentation
 
