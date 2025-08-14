@@ -11,11 +11,13 @@ const api = axios.create({
 });
 
 export const taskApi = {
-  // Get all tasks with optional filtering
-  getTasks: (priority?: string, status?: string) => {
+  // Get all tasks with optional filtering and pagination
+  getTasks: (priority?: string, status?: string, page?: number, pageSize?: number) => {
     const params = new URLSearchParams();
     if (priority) params.append('priority', priority);
     if (status) params.append('status', status);
+    if (page) params.append('page', page.toString());
+    if (pageSize) params.append('pageSize', pageSize.toString());
     
     return api.get<Task[]>(`/tasks${params.toString() ? `?${params.toString()}` : ''}`);
   },

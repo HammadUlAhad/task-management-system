@@ -13,29 +13,79 @@ interface TaskListProps {
 const TaskList = ({ initialTasks = [] }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
   const [priorityFilter, setPriorityFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showChart, setShowChart] = useState(false);
+  
+  const TASKS_PER_PAGE = 10;
 
-  // Lazy loading for tasks
-  const loadTasks = async () => {
-    setLoading(true);
+  // Load tasks with pagination and filtering
+  const loadTasks = async (pageNum: number = 1, resetTasks: boolean = false) => {
+    if (pageNum === 1) {
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
+    
     try {
       const response = await taskApi.getTasks(
         priorityFilter || undefined, 
-        statusFilter || undefined
+        statusFilter || undefined,
+        pageNum,
+        TASKS_PER_PAGE
       );
-      setTasks(response.data);
+      
+      const newTasks = response.data;
+      
+      if (resetTasks || pageNum === 1) {
+        setTasks(newTasks);
+      } else {
+        setTasks(prev => [...prev, ...newTasks]);
+      }
+      
+      // Check if we have more tasks to load
+      setHasMore(newTasks.length === TASKS_PER_PAGE);
+      setPage(pageNum);
+      
     } catch (error) {
       console.error('Error loading tasks:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
+  // Load more tasks for infinite scroll
+  const loadMoreTasks = async () => {
+    if (!loadingMore && hasMore) {
+      await loadTasks(page + 1, false);
+    }
+  };
+
+  // Handle scroll event for lazy loading
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop
+        >= document.documentElement.offsetHeight - 100
+        && !loadingMore && hasMore
+      ) {
+        loadMoreTasks();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadingMore, hasMore, page]);
+
   // Initial load and filter changes
   useEffect(() => {
-    loadTasks();
+    setPage(1);
+    setHasMore(true);
+    loadTasks(1, true);
   }, [priorityFilter, statusFilter]);
 
   // Calculate task statistics
@@ -298,6 +348,21 @@ const TaskList = ({ initialTasks = [] }: TaskListProps) => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Loading More Indicator */}
+      {loadingMore && (
+        <div className="text-center py-4">
+          <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+          <p className="mt-2 text-gray-600">Loading more tasks...</p>
+        </div>
+      )}
+
+      {/* No More Tasks Message */}
+      {!loading && !hasMore && tasks.length > 0 && (
+        <div className="text-center py-4">
+          <p className="text-gray-500">No more tasks to load</p>
         </div>
       )}
     </div>

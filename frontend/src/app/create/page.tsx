@@ -15,7 +15,7 @@ const CreateTaskPage = () => {
     title: '',
     description: '',
     priority: 'Medium',
-    dueDate: '',
+    dueDate: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
     status: 'Pending'
   });
 

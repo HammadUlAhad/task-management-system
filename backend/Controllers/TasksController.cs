@@ -19,10 +19,14 @@ namespace backend.Controllers
         }
         
         /// <summary>
-        /// GET /api/tasks - Retrieve all tasks with optional filtering
+        /// GET /api/tasks - Retrieve all tasks with optional filtering and pagination
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks([FromQuery] string? priority = null, [FromQuery] string? status = null)
+        public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks(
+            [FromQuery] string? priority = null, 
+            [FromQuery] string? status = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             var tasks = await _taskService.GetAllTasksAsync();
             
@@ -37,7 +41,21 @@ namespace backend.Controllers
                 tasks = tasks.Where(t => t.Status == statusEnum).ToList();
             }
             
-            var taskDtos = tasks.Select(MapToDto);
+            // Apply pagination
+            var totalTasks = tasks.Count();
+            var paginatedTasks = tasks
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            
+            var taskDtos = paginatedTasks.Select(MapToDto);
+            
+            // Add pagination metadata to response headers
+            Response.Headers["X-Total-Count"] = totalTasks.ToString();
+            Response.Headers["X-Page"] = page.ToString();
+            Response.Headers["X-Page-Size"] = pageSize.ToString();
+            Response.Headers["X-Total-Pages"] = ((int)Math.Ceiling((double)totalTasks / pageSize)).ToString();
+            
             return Ok(taskDtos);
         }
         
