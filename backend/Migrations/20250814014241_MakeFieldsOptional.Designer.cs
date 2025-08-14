@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(TaskManagementDbContext))]
-    partial class TaskManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814014241_MakeFieldsOptional")]
+    partial class MakeFieldsOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +81,9 @@ namespace backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 14, 1, 42, 55, 564, DateTimeKind.Utc).AddTicks(5074),
+                            CreatedAt = new DateTime(2025, 8, 14, 1, 42, 41, 19, DateTimeKind.Utc).AddTicks(7685),
                             Description = "This is a sample task to get you started",
-                            DueDate = new DateTime(2025, 8, 21, 1, 42, 55, 564, DateTimeKind.Utc).AddTicks(5055),
+                            DueDate = new DateTime(2025, 8, 21, 1, 42, 41, 19, DateTimeKind.Utc).AddTicks(7668),
                             Priority = 1,
                             Status = 0,
                             Title = "Welcome Task"

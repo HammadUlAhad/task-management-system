@@ -12,24 +12,24 @@ namespace backend.Models
         [Column(TypeName = "nvarchar(200)")]
         public string Title { get; set; } = string.Empty;
         
+        [Required(ErrorMessage = "Description is required")]
         [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
         [Column(TypeName = "nvarchar(1000)")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "Priority is required")]
         [Column(TypeName = "int")]
         public TaskPriority Priority { get; set; }
         
-        [Required(ErrorMessage = "Due date is required")]
         [Column(TypeName = "datetime2")]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         
         [Required(ErrorMessage = "Status is required")]
         [Column(TypeName = "int")]
         public TaskStatus Status { get; set; } = TaskStatus.Pending;
         
         // Business logic methods (not mapped to database)
-        public bool IsOverdue() => DateTime.UtcNow > DueDate && Status != TaskStatus.Completed;
+        public bool IsOverdue() => DueDate.HasValue && DateTime.UtcNow > DueDate.Value && Status != TaskStatus.Completed;
         public bool IsHighPriority() => Priority == TaskPriority.High;
     }
     

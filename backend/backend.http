@@ -3,26 +3,26 @@
 # Task Management API Tests - Essential CRUD Operations
 
 ### Get all tasks
-GET {{backend_HostAddress}}/tasks
+GET {{backend_HostAddress}}/api/tasks
 
 ###
 
 ### Create a new task with low priority
-POST {{backend_HostAddress}}/tasks
+POST {{backend_HostAddress}}/api/tasks
 Content-Type: application/json
 
 {
   "title": "Complete project documentation",
   "description": "Write comprehensive documentation for the task management system",
-  "priority": 0,
+  "priority": "Low",
   "dueDate": "2025-08-20T10:00:00Z",
-  "status": 0
+  "status": "Pending"
 }
 
 ###
 
 ### Create a high priority task (should trigger event logging)
-POST {{backend_HostAddress}}/tasks
+POST {{backend_HostAddress}}/api/tasks
 Content-Type: application/json
 
 {

@@ -6,7 +6,7 @@ using backend.DTOs;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("tasks")]
+    [Route("api/tasks")]
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
@@ -134,11 +134,6 @@ namespace backend.Controllers
                 Priority = task.Priority,
                 DueDate = task.DueDate,
                 Status = task.Status,
-
-                IsHighPriority = task.IsHighPriority(),
-                IsOverdue = task.IsOverdue(),
-                DaysUntilDue = (int)(task.DueDate - DateTime.UtcNow).TotalDays,
-
                 CreatedAt = task.CreatedAt,
                 UpdatedAt = task.UpdatedAt
             };
