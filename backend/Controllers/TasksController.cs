@@ -19,12 +19,24 @@ namespace backend.Controllers
         }
         
         /// <summary>
-        /// GET /tasks - Retrieve all tasks
+        /// GET /api/tasks - Retrieve all tasks with optional filtering
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks()
+        public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks([FromQuery] string? priority = null, [FromQuery] string? status = null)
         {
             var tasks = await _taskService.GetAllTasksAsync();
+            
+            // Apply filtering if parameters are provided
+            if (!string.IsNullOrEmpty(priority) && Enum.TryParse<TaskPriority>(priority, true, out var priorityEnum))
+            {
+                tasks = tasks.Where(t => t.Priority == priorityEnum).ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(status) && Enum.TryParse<backend.Models.TaskStatus>(status, true, out var statusEnum))
+            {
+                tasks = tasks.Where(t => t.Status == statusEnum).ToList();
+            }
+            
             var taskDtos = tasks.Select(MapToDto);
             return Ok(taskDtos);
         }

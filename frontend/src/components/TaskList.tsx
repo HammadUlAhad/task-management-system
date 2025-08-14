@@ -12,7 +12,6 @@ interface TaskListProps {
 
 const TaskList = ({ initialTasks = [] }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>(initialTasks);
   const [loading, setLoading] = useState(false);
   const [priorityFilter, setPriorityFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -27,7 +26,6 @@ const TaskList = ({ initialTasks = [] }: TaskListProps) => {
         statusFilter || undefined
       );
       setTasks(response.data);
-      setFilteredTasks(response.data);
     } catch (error) {
       console.error('Error loading tasks:', error);
     } finally {
@@ -210,7 +208,7 @@ const TaskList = ({ initialTasks = [] }: TaskListProps) => {
       {/* Task List */}
       {!loading && (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          {filteredTasks.length === 0 ? (
+          {tasks.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-500 text-lg">No tasks found</p>
               <Link
@@ -244,7 +242,7 @@ const TaskList = ({ initialTasks = [] }: TaskListProps) => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredTasks.map((task) => (
+                  {tasks.map((task) => (
                     <tr key={task.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="max-w-xs">
