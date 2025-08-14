@@ -12,7 +12,6 @@ namespace backend.Models
         [Column(TypeName = "nvarchar(200)")]
         public string Title { get; set; } = string.Empty;
         
-        [Required(ErrorMessage = "Description is required")]
         [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
         [Column(TypeName = "nvarchar(1000)")]
         public string Description { get; set; } = string.Empty;
