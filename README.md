@@ -143,9 +143,9 @@ task-management-system/
    dotnet run
    ```
    
-   Backend will be available at: `http://localhost:5192`
+   Backend will be available at: `https://localhost:7079` (HTTPS - primary) or `http://localhost:5192` (HTTP - redirects to HTTPS)
    
-   Swagger documentation: `http://localhost:5192/swagger`
+   Swagger documentation: `https://localhost:7079/swagger`
 
 ### Frontend Setup
 
@@ -174,11 +174,13 @@ For development, run both servers simultaneously:
 ```bash
 cd backend && dotnet run
 ```
+*Backend will start on https://localhost:7079 (HTTPS)*
 
 **Terminal 2 (Frontend)**:
 ```bash
 cd frontend && npm run dev
 ```
+*Frontend will start on http://localhost:3000*
 
 ## Troubleshooting
 
@@ -207,15 +209,35 @@ cd frontend && npm run dev
 - Ensure LocalDB is running: `sqllocaldb start MSSQLLocalDB`
 - Check connection string in `appsettings.json`
 
+### Network Connectivity Issues
+
+**If frontend shows "AxiosError: Network Error":**
+
+1. **Check API URL configuration**: Ensure `src/services/taskApi.ts` uses HTTPS:
+   ```typescript
+   const API_BASE_URL = 'https://localhost:7079/api';
+   ```
+
+2. **Verify backend is running**: Test API directly:
+   ```bash
+   # PowerShell
+   Invoke-RestMethod -Uri "https://localhost:7079/api/tasks" -Method GET
+   ```
+
+3. **Clear browser cache**: Hard refresh (Ctrl+Shift+R) or clear browser cache
+
+4. **Check certificate issues**: Accept the HTTPS certificate when prompted
+
 ### Common Issues
 
-- **Port conflicts**: Backend uses port 5192, frontend uses port 3000
+- **Port conflicts**: Backend uses ports 7079 (HTTPS) and 5192 (HTTP), frontend uses port 3000
 - **CORS errors**: Make sure backend is running before starting frontend
 - **Build errors**: Run `dotnet clean` and `dotnet build` in backend directory
+- **Network errors**: Frontend uses HTTPS endpoint (`https://localhost:7079/api`) to avoid redirect issues
 
 ## API Documentation
 
-Once the backend is running, visit `http://localhost:5192/swagger` for interactive API documentation.
+Once the backend is running, visit `https://localhost:7079/swagger` for interactive API documentation.
 
 ### Key Endpoints
 - `GET /api/tasks` - Get all tasks (with optional filtering and pagination)
@@ -247,6 +269,7 @@ Once the backend is running, visit `http://localhost:5192/swagger` for interacti
 
 ### Frontend Configuration
 - API base URL is configured in `src/services/taskApi.ts`
+- Current configuration: `https://localhost:7079/api` (uses HTTPS for secure communication)
 - Tailwind CSS configuration in `tailwind.config.js`
 - TypeScript configuration in `tsconfig.json`
 
